@@ -50,6 +50,9 @@ class Path extends Phaser.Scene {
 
         // Create enemyShip as a follower type of sprite
         // Call startFollow() on enemyShip to have it follow the curve
+
+        this.runMode = false;
+
         my.sprite.enemyShip = this.add.follower(this.curve, 10, 10, "enemyShip");
         my.sprite.enemyShip.visible = false;
 
@@ -89,13 +92,19 @@ class Path extends Phaser.Scene {
     update() {
 
         if (Phaser.Input.Keyboard.JustDown(this.ESCKey)) {
-            console.log("Clear path");
-            // TODO: 
-            // * Add code to check if run mode is active
-            //   If run mode is active, then don't call clearPoints()
-            //   (i.e., can only clear points when not in run mode)
-
-            this.clearPoints();
+            if(!this.runMode){            
+                console.log("Clear path");
+                // TODO: 
+                // * Add code to check if run mode is active
+                //   If run mode is active, then don't call clearPoints()
+                //   (i.e., can only clear points when not in run mode)
+                
+                this.clearPoints();
+            }
+            else{
+                console.log("In run mode, not clearing path");
+            }
+           
 
         }
 
@@ -115,6 +124,12 @@ class Path extends Phaser.Scene {
             //  point0.x, point0.y,
             //  point1.x, point1.y
             // ]
+            console.log("[\n");
+            for(let point of this.curve.points){
+                console.log(point.x + ", " +point.y + ",\n");
+            }
+            console.log("]\n");
+
         }   
 
         if (Phaser.Input.Keyboard.JustDown(this.rKey)) {
@@ -126,7 +141,7 @@ class Path extends Phaser.Scene {
             //   If active:
             //   - call stopFollow on the enemyShip to halt following behavior
             //   - make the enemyShip sprite invisible
-            //   - set sprite mode to false
+            //   - set run mode to false
             //  If not active:
             //   - set sprite mode to true
             //   - set the location of enemyship to the first point on the curve
@@ -149,6 +164,34 @@ class Path extends Phaser.Scene {
             //     rotateToPath: true,
             //     rotationOffset: -90
             // }
+            if(this.runMode){
+                my.sprite.enemyShip.stopFollow();
+                my.sprite.enemyShip.visible = false;
+                this.runMode = false;
+            }
+            else{
+                this.runMode = true;
+                if(this.curve.points[0]){
+                    my.sprite.enemyShip.x = this.curve.points[0].x;
+                    my.sprite.enemyShip.y = this.curve.points[0].y;
+                }
+                my.sprite.enemyShip.visible = true;
+                my.sprite.enemyShip.startFollow({
+                        from: 0,
+                        to: 1,
+                        delay: 0,
+                        duration: 2000,
+                        ease: 'Sine.easeInOut',
+                        repeat: -1,
+                        yoyo: true,
+                        rotateToPath: true,
+                        rotationOffset: -90
+                    });  
+
+
+            }
+
+
         }
 
     }
