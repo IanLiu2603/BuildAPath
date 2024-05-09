@@ -180,7 +180,7 @@ class Path extends Phaser.Scene {
                         from: 0,
                         to: 1,
                         delay: 0,
-                        duration: 2000,
+                            duration: 2000,
                         ease: 'Sine.easeInOut',
                         repeat: -1,
                         yoyo: true,
